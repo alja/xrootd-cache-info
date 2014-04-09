@@ -20,13 +20,13 @@ public:
        long long BytesRead;
        int       HitsCached;
        int       HitsRemote;
-       int       HitsPartial[12];
+       //  int       HitsPartial[12];
 
        void dump() { 
           printf(" detachTime[%d] bytesRead %lld : hitsCached %d hitsRemote %d hitsPartial (",  (int)DetachTime, BytesRead, 
                  HitsCached, HitsRemote);
           for (int i = 0; i < 12 ; ++i) {
-             printf("%d ",HitsPartial[i] );
+             //     printf("%d ",HitsPartial[i] );
           }
 
           printf(")\n");
