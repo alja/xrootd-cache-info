@@ -17,19 +17,12 @@ class Rec
 public:
     struct AStat {
        time_t DetachTime;
-       long long BytesRead;
-       int       HitsCached;
-       int       HitsRemote;
-       //  int       HitsPartial[12];
+       long long BytesDisk;
+       long long BytesRam;
+       long long BytesMissed;
 
        void dump() { 
-          printf(" detachTime[%d] bytesRead %lld : hitsCached %d hitsRemote %d hitsPartial (",  (int)DetachTime, BytesRead, 
-                 HitsCached, HitsRemote);
-          for (int i = 0; i < 12 ; ++i) {
-             //     printf("%d ",HitsPartial[i] );
-          }
-
-          printf(")\n");
+          printf("detachTime[%d] bytesDisk=%lld  bytesRAM=%lld bytesMissed=%lld\n", DetachTime, BytesDisk, BytesRam, BytesMissed);
        }
     };
 
