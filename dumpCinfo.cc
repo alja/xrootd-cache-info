@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <iostream>
+#include <regex>
+#include <string>
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
@@ -22,7 +25,15 @@ public:
        long long BytesMissed;
 
        void dump() { 
-          printf("detachTime[%d] bytesDisk=%lld  bytesRAM=%lld bytesMissed=%lld\n", DetachTime, BytesDisk, BytesRam, BytesMissed);
+char s[1000];
+struct tm * p = localtime(&DetachTime);
+
+strftime(s, 1000, "%c", p);
+//strftime(s, 1000, "%A, %B %d %Y", p);
+
+
+          const time_t* t = &DetachTime;
+          printf("[%s], bytesDisk=%lld,  bytesRAM=%lld, bytesMissed=%lld\n", s, BytesDisk, BytesRam, BytesMissed);
        }
     };
 
@@ -169,10 +180,11 @@ public:
       printf("Stat version == %d,  bufferSize %lld nBlocks %d nDownlaoded %d %s\n",m_version, m_bufferSize, m_sizeInBits , cntd, (m_sizeInBits == cntd) ? " complete" :"");
 
       if (full) {
-         printf("num access %d \n", m_accessCnt);
+         // printf("num access %d \n", m_accessCnt);
+         printf("\n");
          for (int i=0; i < m_accessCnt; ++i)
          {  
-            printf("accessStat[%d] >>>  ", i);
+            printf("access %d >>  ", i);
             m_stat[i].dump();
       
          }
@@ -183,38 +195,40 @@ public:
 
 int main(int argc, char* argv[])
 {
-bool fullprint = false;
-if (argc > 2) {
-fullprint = true;
-}
-
-/*
-   {
-      Rec r;
-      FILE* f = fopen(argv[1],"w+");
-      r.resizeBits(19);
-      r.setBit(0);
-      r.setBit(1);
-      r.setBit(2);
-      r.setBit(7);
-      for(int i = 8; i < 18; ++i) {
-         r.setBit(8+i);
-      }
-
-      r.m_stat.push_back(Rec::AStat());
-      r.m_stat.back().m_closeTime = time(0);
-      int res = r.write(f);
-      printf("writing res = %d .....\n", res);
-      r.print();
-      fclose(f);
+   bool fullprint = false;
+   if (argc > 2) {
+      fullprint = true;
    }
- */
+
+   /*
+     {
+     Rec r;
+     FILE* f = fopen(argv[1],"w+");
+     r.resizeBits(19);
+     r.setBit(0);
+     r.setBit(1);
+     r.setBit(2);
+     r.setBit(7);
+     for(int i = 8; i < 18; ++i) {
+     r.setBit(8+i);
+     }
+
+     r.m_stat.push_back(Rec::AStat());
+     r.m_stat.back().m_closeTime = time(0);
+     int res = r.write(f);
+     printf("writing res = %d .....\n", res);
+     r.print();
+     fclose(f);
+     }
+   */
    {
       printf("\n----------------------------------------------\n");
       printf("%s .....\n", argv[1]);
+
+
       Rec r;
       FILE* f = fopen(argv[1],"r");
-   int res = r.read(f);
+      int res = r.read(f);
       fclose(f);
 
       r.print(res >=0);
