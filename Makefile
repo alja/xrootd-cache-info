@@ -1,2 +1,2 @@
 dumpCinfo: dumpCinfo.cc
-	${CXX} dumpCinfo.cc -o dumpCinfo
+	c++ dumpCinfo.cc -o dumpCinfo -lpcrecpp 

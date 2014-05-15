@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
-#include <regex>
 #include <string>
+#include <pcrecpp.h>
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
@@ -42,6 +42,7 @@ public:
     long long  m_bufferSize;
     int        m_sizeInBits;
     char*      m_buff;
+    int        m_fileBlock;
     int        m_accessCnt;
     std::vector<AStat> m_stat;
 
@@ -50,6 +51,7 @@ public:
    Rec(): m_version(-1),
           m_bufferSize(1024*1024),
           m_buff(0), m_sizeInBits(0),
+          m_fileBlock(-1),
           m_accessCnt(0),
           m_complete(false) 
    {
@@ -178,7 +180,10 @@ public:
       if (printBits) printf("\n");
 
       printf("Stat version == %d,  bufferSize %lld nBlocks %d nDownlaoded %d %s\n",m_version, m_bufferSize, m_sizeInBits , cntd, (m_sizeInBits == cntd) ? " complete" :"");
-
+      if (m_fileBlock >=0 )
+      {
+         printf("FileBlock %d", m_fileBlock);
+      }
       if (full) {
          // printf("num access %d \n", m_accessCnt);
          printf("\n");
@@ -225,11 +230,20 @@ int main(int argc, char* argv[])
       printf("\n----------------------------------------------\n");
       printf("%s .....\n", argv[1]);
 
-
       Rec r;
       FILE* f = fopen(argv[1],"r");
       int res = r.read(f);
       fclose(f);
+      pcrecpp::RE re  ( "___(\\d+)_(\\d+)\\.cinfo$" );  
+      std::string name(argv[1]);
+      long long bsize, boff;
+
+      if (re.PartialMatch(name, &bsize, &boff))
+      { 
+         r.m_fileBlock =  boff/bsize;
+         //         printf("Block %d\n", fileBlock);
+      }
+
 
       r.print(res >=0);
       r.isAnythingEmptyInRng(7, 11);
